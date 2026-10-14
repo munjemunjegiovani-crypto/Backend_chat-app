@@ -1,4 +1,4 @@
--- Kova database schema. Runs automatically on server start (safe to run many times).
+-- Gochat database schema. Runs automatically on server start (safe to run many times).
 
 CREATE TABLE IF NOT EXISTS files (
   id UUID PRIMARY KEY,

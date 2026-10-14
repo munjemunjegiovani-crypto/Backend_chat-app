@@ -18,7 +18,7 @@ import { pushRouter } from './push.js';
 
 const PORT = Number(process.env.PORT || 4000);
 
-// CLIENT_URL can hold several comma-separated origins, e.g. "https://kova.netlify.app,http://localhost:5173"
+// CLIENT_URL can hold several comma-separated origins, e.g. "https://gochat.netlify.app,http://localhost:5173"
 const origins = (process.env.CLIENT_URL || 'http://localhost:5173')
   .split(',')
   .map((s) => s.trim().replace(/\/$/, ''))
@@ -31,7 +31,7 @@ app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(compression());
 app.use(express.json({ limit: '1mb' }));
 
-app.get('/', (req, res) => res.json({ name: 'Kova API', status: 'ok' }));
+app.get('/', (req, res) => res.json({ name: 'Gochat API', status: 'ok' }));
 app.get('/health', (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
 
 // WebRTC servers for calls. Add a free TURN server in ICE_SERVERS if calls fail on some mobile networks.
@@ -78,7 +78,7 @@ async function start() {
   const server = http.createServer(app);
   initRealtime(server, allowedOrigins);
   server.listen(PORT, () => {
-    console.log(`Kova API listening on port ${PORT}`);
+    console.log(`Gochat API listening on port ${PORT}`);
     console.log(`Allowed front-end origins: ${origins.join(', ')}`);
   });
   cleanupMoments().catch((e) => console.error('cleanup', e.message));

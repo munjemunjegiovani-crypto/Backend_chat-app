@@ -225,7 +225,7 @@ async function notify(userId, actorId, type, text, channelId, postId) {
   );
   const actor = await one('SELECT name, avatar_id FROM users WHERE id = $1', [actorId]);
   if (!isOnline(userId)) {
-    sendPush([userId], { title: 'Kova', body: text, url: postId ? `/posts/${postId}` : `/channels/${channelId}`, tag: `n-${n.id}` }).catch(() => {});
+    sendPush([userId], { title: 'Gochat', body: text, url: postId ? `/posts/${postId}` : `/channels/${channelId}`, tag: `n-${n.id}` }).catch(() => {});
   }
   emitToUser(userId, 'notification', {
     id: n.id, type, text, channelId, postId, read: false, createdAt: n.created_at,

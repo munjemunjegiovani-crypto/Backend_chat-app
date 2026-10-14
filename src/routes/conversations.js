@@ -392,7 +392,7 @@ async function notifyOffline(conversationId, senderId, msg) {
   if (!targets.length) return;
   const group = rows[0].type === 'group';
   await sendPush(targets, {
-    title: group ? rows[0].name : msg.sender?.name || 'Kova',
+    title: group ? rows[0].name : msg.sender?.name || 'Gochat',
     body: group ? `${msg.sender?.name}: ${preview(msg)}` : preview(msg),
     url: `/chat/${conversationId}`,
     tag: `conv-${conversationId}`,
