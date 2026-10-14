@@ -1,8 +1,8 @@
-# Render Blueprint for the Kova backend (free plan).
+# Render Blueprint for the Gochat backend (free plan).
 # On Render: New > Blueprint > pick this repo. You will be asked for the secret values.
 services:
   - type: web
-    name: kova-backend
+    name: gochat-backend
     runtime: node
     plan: free
     buildCommand: npm install

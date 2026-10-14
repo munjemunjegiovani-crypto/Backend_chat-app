@@ -152,7 +152,7 @@ export function initRealtime(httpServer, allowedOrigins) {
             const caller = await one('SELECT name FROM users WHERE id = $1', [userId]);
             sendPush([toUserId], {
               title: `Missed ${type === 'video' ? 'video' : 'voice'} call`,
-              body: `${caller?.name || 'Someone'} tried to call you. Open Kova to call back.`,
+              body: `${caller?.name || 'Someone'} tried to call you. Open Gochat to call back.`,
               url: '/calls',
               tag: `call-${callId}`,
             }).catch(() => {});

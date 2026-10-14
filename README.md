@@ -1,6 +1,6 @@
-# Kova — Backend (API + real-time server)
+# Gochat — Backend (API + real-time server)
 
-The server for **Kova**, a classic, premium messenger: one-to-one chats, groups, channels with posts and comments, 24-hour Moments, and voice/video calls.
+The server for **Gochat**, a classic, premium messenger: one-to-one chats, groups, channels with posts and comments, 24-hour Moments, and voice/video calls.
 
 - **Node.js + Express** — REST API
 - **Socket.IO** — instant messages, typing indicators, online status, read receipts, call signalling
@@ -10,7 +10,7 @@ The server for **Kova**, a classic, premium messenger: one-to-one chats, groups,
 
 No paid APIs. Everything runs on free plans.
 
-The front end lives in a separate repo (`kova-frontend`).
+The front end lives in a separate repo ([Frontend_chat_app](https://github.com/munjemunjegiovani-crypto/Frontend_chat_app)).
 
 ---
 
@@ -39,14 +39,14 @@ Then:
 npm run dev
 ```
 
-You should see `Kova API listening on port 4000`. The database tables are created automatically the first time it starts.
+You should see `Gochat API listening on port 4000`. The database tables are created automatically the first time it starts.
 
 ---
 
 ## 2. Create the free database (Neon)
 
 1. Go to <https://neon.tech> and sign in (you already have an account).
-2. **New Project** → name it `kova` → pick the region closest to your users (e.g. Europe/Frankfurt for Cameroon).
+2. **New Project** → name it `gochat` → pick the region closest to your users (e.g. Europe/Frankfurt for Cameroon).
 3. Open **Connect**, copy the connection string. It looks like
    `postgresql://user:password@ep-xxxx.eu-central-1.aws.neon.tech/neondb?sslmode=require`
 4. That is your `DATABASE_URL`.
@@ -59,8 +59,8 @@ You should see `Kova API listening on port 4000`. The database tables are create
 
 Netlify can't keep the live connection that instant chat and calls need, so the backend goes on **Render**.
 
-1. Push this folder to its own GitHub repo (e.g. `kova-backend`).
-2. Go to <https://render.com> → sign in with GitHub → **New → Web Service** → choose the `kova-backend` repo.
+1. Push this folder to its own GitHub repo (`Backend_chat-app`).
+2. Go to <https://render.com> → sign in with GitHub → **New → Web Service** → choose the `Backend_chat-app` repo.
 3. Settings:
    - **Runtime:** Node
    - **Build command:** `npm install`
@@ -69,7 +69,7 @@ Netlify can't keep the live connection that instant chat and calls need, so the 
 4. **Environment variables** (Environment tab):
    - `DATABASE_URL` — from Neon
    - `JWT_SECRET` — from `openssl rand -hex 32`
-   - `CLIENT_URL` — your Netlify URL, e.g. `https://kova-chat.netlify.app` (no slash at the end). You can add more than one, separated by commas.
+   - `CLIENT_URL` — your Netlify URL, e.g. `https://gochat-chat.netlify.app` (no slash at the end). You can add more than one, separated by commas.
    - `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` — from `npm run vapid` (`VAPID_SUBJECT` is `mailto:` + your email)
 5. **Create Web Service**. When it's live, open `https://YOUR-SERVICE.onrender.com/health` — you should see `{"ok":true,...}`.
 6. Copy the Render URL — the front end needs it as `VITE_API_URL`.
@@ -77,7 +77,7 @@ Netlify can't keep the live connection that instant chat and calls need, so the 
 (Alternatively use **New → Blueprint**; `render.yaml` in this repo fills in most settings.)
 
 ### About the free plan
-- The service **sleeps after 15 minutes with no traffic** and takes about a minute to wake up. While anyone has Kova open, it stays awake.
+- The service **sleeps after 15 minutes with no traffic** and takes about a minute to wake up. While anyone has Gochat open, it stays awake.
 - To keep it always awake, create a free monitor at <https://cron-job.org> or <https://uptimerobot.com> that opens `https://YOUR-SERVICE.onrender.com/health` every 10 minutes. One always-on service uses ~744 of the 750 free hours per month.
 
 ---

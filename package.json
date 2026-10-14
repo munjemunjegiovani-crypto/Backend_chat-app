@@ -1,7 +1,7 @@
 {
-  "name": "kova-backend",
+  "name": "gochat-backend",
   "version": "1.0.0",
-  "description": "Kova messaging app - API and real-time server (Express, Socket.IO, PostgreSQL)",
+  "description": "Gochat messaging app - API and real-time server (Express, Socket.IO, PostgreSQL)",
   "type": "module",
   "main": "src/index.js",
   "engines": {
