@@ -1,0 +1,25 @@
+# Render Blueprint for the Kova backend (free plan).
+# On Render: New > Blueprint > pick this repo. You will be asked for the secret values.
+services:
+  - type: web
+    name: kova-backend
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_URL
+        sync: false
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY
+        sync: false
+      - key: VAPID_SUBJECT
+        value: mailto:you@example.com
+      - key: MAX_UPLOAD_MB
+        value: "15"
