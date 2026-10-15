@@ -60,6 +60,7 @@ export function serializeMessage(m) {
           body: m.r_deleted ? 'This message was deleted' : m.r_body,
         }
       : null,
+    momentQuote: !deleted && m.moment_quote ? m.moment_quote : null,
     forwarded: m.forwarded,
     editedAt: m.edited_at,
     deletedAt: m.deleted_at,
