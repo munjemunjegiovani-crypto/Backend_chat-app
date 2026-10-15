@@ -76,6 +76,7 @@ CREATE TABLE IF NOT EXISTS messages (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS idx_messages_conv ON messages(conversation_id, created_at DESC);
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS moment_quote JSONB;
 
 CREATE TABLE IF NOT EXISTS message_reactions (
   message_id INTEGER NOT NULL REFERENCES messages(id) ON DELETE CASCADE,

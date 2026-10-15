@@ -325,7 +325,33 @@ router.get('/:id/media', ah(async (req, res) => {
   res.json(rows.map(serializeMessage));
 }));
 
-export async function sendMessage(conversationId, senderId, { type = 'text', body = '', fileId = null, replyToId = null, forwarded = false }) {
+// A reply to a Moment carries a snapshot of it (a small preview image or the text card),
+// because the Moment itself fades after 24 hours.
+async function cleanMomentQuote(q, conversationId, senderId) {
+  if (!q || typeof q !== 'object') return null;
+  if (!['text', 'image', 'video'].includes(q.type)) return null;
+  const out = {
+    type: q.type,
+    body: String(q.body || '').slice(0, 200),
+    background: /^#[0-9a-fA-F]{3,8}$/.test(q.background || '') ? q.background : '#14213D',
+    ownerId: null,
+    ownerName: String(q.ownerName || '').slice(0, 60),
+    previewId: null,
+  };
+  const owner = Number(q.ownerId);
+  if (owner) {
+    const isMember = await one('SELECT 1 FROM conversation_members WHERE conversation_id = $1 AND user_id = $2', [conversationId, owner]);
+    if (isMember) out.ownerId = owner;
+  }
+  if (q.previewId && /^[0-9a-f-]{36}$/i.test(q.previewId)) {
+    const f = await one('SELECT 1 FROM files WHERE id = $1 AND owner_id = $2 AND mime LIKE $3', [q.previewId, senderId, 'image/%']);
+    if (f) out.previewId = q.previewId;
+  }
+  if (q.type !== 'text' && !out.previewId) return null;
+  return out;
+}
+
+export async function sendMessage(conversationId, senderId, { type = 'text', body = '', fileId = null, replyToId = null, forwarded = false, momentQuote = null }) {
   const m = await membership(conversationId, senderId);
   if (m.type === 'group' && m.only_admins_send && m.role !== 'admin') {
     throw new HttpError(403, 'Only admins can send messages in this group.');
@@ -349,10 +375,11 @@ export async function sendMessage(conversationId, senderId, { type = 'text', bod
     const r = await one('SELECT 1 FROM messages WHERE id = $1 AND conversation_id = $2', [replyToId, conversationId]);
     if (!r) replyToId = null;
   }
+  const quote = await cleanMomentQuote(momentQuote, conversationId, senderId);
   const row = await one(
-    `INSERT INTO messages (conversation_id, sender_id, type, body, file_id, reply_to_id, forwarded)
-     VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, created_at`,
-    [conversationId, senderId, type, body, fileId, replyToId, forwarded]
+    `INSERT INTO messages (conversation_id, sender_id, type, body, file_id, reply_to_id, forwarded, moment_quote)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, created_at`,
+    [conversationId, senderId, type, body, fileId, replyToId, forwarded, quote ? JSON.stringify(quote) : null]
   );
   await query('UPDATE conversations SET last_message_at = $2 WHERE id = $1', [conversationId, row.created_at]);
   // Sender has obviously read everything up to their own message; un-archive for everyone
