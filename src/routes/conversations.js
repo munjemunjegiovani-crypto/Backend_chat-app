@@ -347,7 +347,23 @@ async function cleanMomentQuote(q, conversationId, senderId) {
     const f = await one('SELECT 1 FROM files WHERE id = $1 AND owner_id = $2 AND mime LIKE $3', [q.previewId, senderId, 'image/%']);
     if (f) out.previewId = q.previewId;
   }
-  if (q.type !== 'text' && !out.previewId) return null;
+  // No usable snapshot from the app: for photo moments, keep our own copy of the photo on the server,
+  // because the original is deleted when the moment fades.
+  if (!out.previewId && q.type === 'image' && Number(q.momentId) && out.ownerId) {
+    const src = await one(
+      `SELECT f.mime, f.size, f.data FROM moments m JOIN files f ON f.id = m.file_id
+       WHERE m.id = $1 AND m.user_id = $2 AND m.expires_at > now() AND f.mime LIKE 'image/%' AND f.size <= 4194304`,
+      [Number(q.momentId), out.ownerId]
+    );
+    if (src) {
+      const id = crypto.randomUUID();
+      await one(
+        'INSERT INTO files (id, owner_id, name, mime, size, data) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+        [id, senderId, 'moment.jpg', src.mime, src.size, src.data]
+      );
+      out.previewId = id;
+    }
+  }
   return out;
 }
 
